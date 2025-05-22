@@ -20,7 +20,9 @@ def log_queries(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         query = kwargs.get('query') if 'query' in kwargs else (args[0] if args else None)
-        logging.info(f"Executing SQL query: {query}")
+        message = f"Executing SQL query: {query}"
+        print(message)
+        logging.info(message)
         return func(*args, **kwargs)
     return wrapper
 
