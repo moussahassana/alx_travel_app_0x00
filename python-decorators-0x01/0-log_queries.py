@@ -1,12 +1,26 @@
 import sqlite3
 import functools
+from datetime import datetime
+import logging
+import os
+
+# Ensure logs directory exists
+os.makedirs('logs', exist_ok=True)
+
+# Configure logging
+logging.basicConfig(
+    filename='logs/db_queries.log',
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
 
 # Decorator to log SQL queries
 def log_queries(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         query = kwargs.get('query') if 'query' in kwargs else (args[0] if args else None)
-        print(f"[LOG] Executing SQL query: {query}")
+        logging.info(f"Executing SQL query: {query}")
         return func(*args, **kwargs)
     return wrapper
 
