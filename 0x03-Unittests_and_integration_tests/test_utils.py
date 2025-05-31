@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
+
 import unittest
+from typing import Any, Dict, Tuple
 from parameterized import parameterized
-from utilis import access_nested_map
+from utils import access_nested_map
+
 
 class TestAccessNestedMap(unittest.TestCase):
     """Test cases for the access_nested_map function."""
@@ -11,9 +14,15 @@ class TestAccessNestedMap(unittest.TestCase):
         ({"a": {"b": 2}}, ("a",), {"b": 2}),
         ({"a": {"b": 2}}, ("a", "b"), 2),
     ])
-    def test_access_nested_map(self, nested_map, path, expected):
+    def test_access_nested_map(
+        self,
+        nested_map: Dict[str, Any],
+        path: Tuple[str, ...],
+        expected: Any
+    ) -> None:
         """Test access_nested_map with various inputs."""
         self.assertEqual(access_nested_map(nested_map, path), expected)
+
 
 if __name__ == "__main__":
     unittest.main()
