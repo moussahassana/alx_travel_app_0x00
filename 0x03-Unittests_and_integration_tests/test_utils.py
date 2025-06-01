@@ -48,11 +48,13 @@ class TestGetJson(unittest.TestCase):
     @patch('utils.requests.get')
     def test_get_json(self, test_url, test_payload, mock_get):
         """
-        Test that get_json returns the expected JSON payload without making real HTTP requests.
+        Test that get_json returns the expected JSON payload 
+        without making real HTTP requests.
 
         Args:
             test_url (str): The URL passed to get_json
-            test_payload (dict): The mocked JSON data to be returned by the .json() method
+            test_payload (dict): The mocked JSON data to be returned 
+            by the .json() method
             mock_get (Mock): The patched version of requests.get
         """
 
@@ -87,7 +89,8 @@ class TestMemoize(unittest.TestCase):
 
     def test_memoize(self):
         """
-        Test that the memoization decorator caches the result after the first call.
+        Test that the memoization decorator caches 
+        the result after the first call.
 
         The test uses `unittest.mock.patch` to track how many times
         the underlying method (`a_method`) is called. It ensures that
@@ -106,13 +109,16 @@ class TestMemoize(unittest.TestCase):
                 """Property that returns result of a_method, memoized."""
                 return self.a_method()
 
-        with patch.object(TestClass, "a_method", return_value=42) as mocked_method:
+        with patch.object(
+            TestClass, "a_method", 
+            return_value=42) as mocked_method:
             obj = TestClass()
 
             # First call should invoke the method
             self.assertEqual(obj.a_property, 42)
 
-            # Second call should return cached value without calling the method again
+            # Second call should return cached value 
+            # without calling the method again
             self.assertEqual(obj.a_property, 42)
 
             # Assert that a_method was only called once
