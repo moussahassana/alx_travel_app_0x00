@@ -60,6 +60,5 @@ class TestGithubOrgClient(unittest.TestCase):
             mock_repos_url.assert_called_once()
     
     
-
 if __name__ == "__main__":
     unittest.main()
