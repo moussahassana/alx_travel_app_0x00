@@ -110,7 +110,7 @@ class TestMemoize(unittest.TestCase):
 
         with patch.object(
             TestClass, "a_method", return_value=42
-            ) as mocked_method:
+        ) as mocked_method:
             obj = TestClass()
 
             # First call should invoke the method
