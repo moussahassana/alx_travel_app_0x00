@@ -29,6 +29,16 @@ class TestAccessNestedMap(unittest.TestCase):
         """Test access_nested_map with various inputs."""
         self.assertEqual(utils.access_nested_map(nested_map, path), expected)
 
+    @parameterized.expand([
+        ({}, ("a",)),
+        ({"a": 1}, ("a","b")),
+    ])
+    def test_access_nested_map_exception(self, nested_map, path):
+        """Test that access_nested_map raises KeyError for invalid paths."""
+        with self.assertRaises(KeyError) as context:
+            utils.access_nested_map(nested_map, path)
+        self.assertEqual(str(context.exception), f"'{path[-1]}'")
+
 
 class TestGetJson(unittest.TestCase):
     """
@@ -73,29 +83,55 @@ class TestGetJson(unittest.TestCase):
 
 
 class TestMemoize(unittest.TestCase):
-    """Test cases for the memoize utility decorator."""
+    """
+    Unit tests for the `memoize` decorator defined in the `utils` module.
 
-    def test_memoize(self) -> None:
-        """Test that a_method is only called once when memoized."""
+    This test case ensures that the `memoize` decorator properly caches
+    the result of a method after the first call, avoiding repeated computation.
+
+    Methods
+    -------
+    test_memoize():
+        Verifies that a memoized method is only called once even if accessed
+        multiple times, and that the cached result is returned afterward.
+    """
+
+    def test_memoize(self):
+        """
+        Test that the memoization decorator caches
+        the result after the first call.
+
+        The test uses `unittest.mock.patch` to track how many times
+        the underlying method (`a_method`) is called. It ensures that
+        calling `a_property` twice results in only one method call.
+        """
 
         class TestClass:
+            """Simple class for testing the memoize decorator."""
+
             def a_method(self):
+                """Method to be memoized."""
                 return 42
 
             @utils.memoize
             def a_property(self):
+                """Property that returns result of a_method, memoized."""
                 return self.a_method()
 
         with patch.object(
-            TestClass, 'a_method', return_value=42
-        ) as mock_method:
+            TestClass, "a_method", return_value=42
+        ) as mocked_method:
             obj = TestClass()
-            result1 = obj.a_property
-            result2 = obj.a_property
 
-            self.assertEqual(result1, 42)
-            self.assertEqual(result2, 42)
-            mock_method.assert_called_once()
+            # First call should invoke the method
+            self.assertEqual(obj.a_property, 42)
+
+            # Second call should return cached value
+            # without calling the method again
+            self.assertEqual(obj.a_property, 42)
+
+            # Assert that a_method was only called once
+            mocked_method.assert_called_once()
 
 
 if __name__ == "__main__":
