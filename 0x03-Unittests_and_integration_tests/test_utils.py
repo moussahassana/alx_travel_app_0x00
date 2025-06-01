@@ -3,9 +3,8 @@
 import unittest
 from typing import Any, Dict, Tuple
 from parameterized import parameterized
-from utils import access_nested_map, get_json
 from unittest.mock import patch, Mock
-
+import utils
 
 class TestAccessNestedMap(unittest.TestCase):
     """Test cases for the access_nested_map function."""
@@ -22,7 +21,7 @@ class TestAccessNestedMap(unittest.TestCase):
         expected: Any
     ) -> None:
         """Test access_nested_map with various inputs."""
-        self.assertEqual(access_nested_map(nested_map, path), expected)
+        self.assertEqual(utils.access_nested_map(nested_map, path), expected)
 
 
 class TestGetJson(unittest.TestCase):
@@ -57,13 +56,32 @@ class TestGetJson(unittest.TestCase):
         mock_get.return_value = mock_response
 
         # Call the function under test
-        result = get_json(test_url)
+        result = utils.get_json(test_url)
 
         # Verify that requests.get was called once with the correct URL
         mock_get.assert_called_once_with(test_url)
 
         # Verify that the result matches the mocked payload
         self.assertEqual(result, test_payload)
+
+
+
+class TestMemoize(unittest.TestCase):
+    def test_memoize(self):
+        """Test that memoization caches the result after first call"""
+        class TestClass:
+            def a_method(self):
+                return 42
+
+            @utils.memoize
+            def a_property(self):
+                return self.a_method()
+
+        with patch.object(TestClass, 'a_method', return_value=42) as mocked_method:
+            obj = TestClass()
+            self.assertEqual(obj.a_property, 42)  # first access
+            self.assertEqual(obj.a_property, 42)  # second access
+            mocked_method.assert_called_once() 
 
 if __name__ == "__main__":
     unittest.main()
