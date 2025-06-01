@@ -2,8 +2,10 @@ from rest_framework import serializers
 from .models import User, Conversation, Message
 
 
-# Serializer for the User model
 class UserSerializer(serializers.ModelSerializer):
+    # Explicit CharField for phone number (example)
+    phone_number = serializers.CharField(allow_blank=True, required=False)
+
     class Meta:
         model = User
         fields = [
@@ -12,9 +14,10 @@ class UserSerializer(serializers.ModelSerializer):
         ]
 
 
-# Serializer for the Message model
 class MessageSerializer(serializers.ModelSerializer):
-    sender = UserSerializer(read_only=True)  # Nested user info
+    sender = UserSerializer(read_only=True)
+    message_body = serializers.CharField(source='content')  # explicit CharField mapping content to message_body
+    sent_at = serializers.SerializerMethodField()
 
     class Meta:
         model = Message
@@ -22,14 +25,26 @@ class MessageSerializer(serializers.ModelSerializer):
             "message_id", "sender", "message_body", "sent_at", "conversation"
         ]
 
+    def get_sent_at(self, obj):
+        # Format timestamp or return string
+        return obj.timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
-# Serializer for the Conversation model, includes nested messages
+
 class ConversationSerializer(serializers.ModelSerializer):
     participants = UserSerializer(many=True, read_only=True)
-    messages = MessageSerializer(many=True, read_only=True)
+    messages = serializers.SerializerMethodField()
 
     class Meta:
         model = Conversation
         fields = [
             "conversation_id", "participants", "created_at", "messages"
         ]
+
+    def get_messages(self, obj):
+        messages = obj.messages.all()
+        return MessageSerializer(messages, many=True).data
+
+    def validate(self, data):
+        if not data.get('participants'):
+            raise serializers.ValidationError("A conversation must have at least one participant.")
+        return data
