@@ -73,55 +73,29 @@ class TestGetJson(unittest.TestCase):
 
 
 class TestMemoize(unittest.TestCase):
-    """
-    Unit tests for the `memoize` decorator defined in the `utils` module.
+    """Test cases for the memoize utility decorator."""
 
-    This test case ensures that the `memoize` decorator properly caches
-    the result of a method after the first call, avoiding repeated computation.
-
-    Methods
-    -------
-    test_memoize():
-        Verifies that a memoized method is only called once even if accessed
-        multiple times, and that the cached result is returned afterward.
-    """
-
-    def test_memoize(self):
-        """
-        Test that the memoization decorator caches
-        the result after the first call.
-
-        The test uses `unittest.mock.patch` to track how many times
-        the underlying method (`a_method`) is called. It ensures that
-        calling `a_property` twice results in only one method call.
-        """
+    def test_memoize(self) -> None:
+        """Test that a_method is only called once when memoized."""
 
         class TestClass:
-            """Simple class for testing the memoize decorator."""
-
             def a_method(self):
-                """Method to be memoized."""
                 return 42
 
             @utils.memoize
             def a_property(self):
-                """Property that returns result of a_method, memoized."""
                 return self.a_method()
 
         with patch.object(
-            TestClass, "a_method", return_value=42
-        ) as mocked_method:
+            TestClass, 'a_method', return_value=42
+        ) as mock_method:
             obj = TestClass()
+            result1 = obj.a_property
+            result2 = obj.a_property
 
-            # First call should invoke the method
-            self.assertEqual(obj.a_property, 42)
-
-            # Second call should return cached value
-            # without calling the method again
-            self.assertEqual(obj.a_property, 42)
-
-            # Assert that a_method was only called once
-            mocked_method.assert_called_once()
+            self.assertEqual(result1, 42)
+            self.assertEqual(result2, 42)
+            mock_method.assert_called_once()
 
 
 if __name__ == "__main__":
