@@ -59,6 +59,6 @@ class TestGithubOrgClient(unittest.TestCase):
             mock_get_json.assert_called_once_with("http://mocked.url")
             mock_repos_url.assert_called_once()
 
-            
+
 if __name__ == "__main__":
     unittest.main()
