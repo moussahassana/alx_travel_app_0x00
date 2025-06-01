@@ -3,7 +3,7 @@ from .models import User, Conversation, Message
 
 
 class UserSerializer(serializers.ModelSerializer):
-    # Explicit CharField for phone number (example)
+    # Explicit CharField for phone number
     phone_number = serializers.CharField(allow_blank=True, required=False)
 
     class Meta:
