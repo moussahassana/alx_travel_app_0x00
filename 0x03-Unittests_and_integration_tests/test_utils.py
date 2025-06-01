@@ -3,7 +3,8 @@
 import unittest
 from typing import Any, Dict, Tuple
 from parameterized import parameterized
-from utils import access_nested_map
+from utils import access_nested_map, get_json
+from unittest.mock import patch, Mock
 
 
 class TestAccessNestedMap(unittest.TestCase):
@@ -24,13 +25,6 @@ class TestAccessNestedMap(unittest.TestCase):
         self.assertEqual(access_nested_map(nested_map, path), expected)
 
 
-# test_utils.py
-
-import unittest
-from unittest.mock import patch, Mock
-from parameterized import parameterized
-from utils import get_json
-
 class TestGetJson(unittest.TestCase):
     """
     Unit test class for the get_json function in utils.py.
@@ -43,16 +37,15 @@ class TestGetJson(unittest.TestCase):
         # - A descriptive test case name
         # - A test URL to pass to get_json
         # - The expected JSON payload to return
-        ("example", "http://example.com", {"payload": True}),
-        ("holberton", "http://holberton.io", {"payload": False}),
+        ("http://example.com", {"payload": True}),
+        ("http://holberton.io", {"payload": False}),
     ])
     @patch('utils.requests.get')
-    def test_get_json(self, name, test_url, test_payload, mock_get):
+    def test_get_json(self, test_url, test_payload, mock_get):
         """
         Test that get_json returns the expected JSON payload without making real HTTP requests.
 
         Args:
-            name (str): A name for the test case (used for readability in test reports)
             test_url (str): The URL passed to get_json
             test_payload (dict): The mocked JSON data to be returned by the .json() method
             mock_get (Mock): The patched version of requests.get
