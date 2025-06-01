@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
+"""Unit tests for the utils module.
+
+This module contains tests for utility functions such as `memoize`,
+`access_nested_map`, and `get_json`.
+"""
 
 import unittest
 from typing import Any, Dict, Tuple
 from parameterized import parameterized
 from unittest.mock import patch, Mock
 import utils
+
 
 class TestAccessNestedMap(unittest.TestCase):
     """Test cases for the access_nested_map function."""
@@ -65,11 +71,6 @@ class TestGetJson(unittest.TestCase):
         self.assertEqual(result, test_payload)
 
 
-import unittest
-from unittest.mock import patch
-import utils
-
-
 class TestMemoize(unittest.TestCase):
     """
     Unit tests for the `memoize` decorator defined in the `utils` module.
@@ -105,7 +106,7 @@ class TestMemoize(unittest.TestCase):
                 """Property that returns result of a_method, memoized."""
                 return self.a_method()
 
-        with patch.object(TestClass, 'a_method', return_value=42) as mocked_method:
+        with patch.object(TestClass, "a_method", return_value=42) as mocked_method:
             obj = TestClass()
 
             # First call should invoke the method
@@ -116,8 +117,7 @@ class TestMemoize(unittest.TestCase):
 
             # Assert that a_method was only called once
             mocked_method.assert_called_once()
- 
+
 
 if __name__ == "__main__":
     unittest.main()
-
