@@ -2,7 +2,7 @@
 from client import GithubOrgClient
 import unittest
 from parameterized import parameterized
-from unittest.mock import patch
+from unittest.mock import PropertyMock, patch
 
 
 class TestGithubOrgClient(unittest.TestCase) :
@@ -23,3 +23,30 @@ class TestGithubOrgClient(unittest.TestCase) :
 
         self.assertEqual(result, expected)
         mock_get_json.assert_called_once_with(f"https://api.github.com/orgs/{org_name}")
+
+    @patch('client.get_json')
+    def test_public_repos(self, mock_get_json):
+        """Test that public_repos returns expected list of repo names and mocks are called"""
+        # Given payload
+        payload = [
+            {"name": "repo1", "license": {"key": "mit"}},
+            {"name": "repo2", "license": {"key": "apache-2.0"}},
+            {"name": "repo3", "license": {"key": "mit"}},
+        ]
+        mock_get_json.return_value = payload
+
+        with patch('client.GithubOrgClient._public_repos_url', new_callable=PropertyMock) as mock_repos_url:
+            mock_repos_url.return_value = "http://mocked.url"
+
+            client = GithubOrgClient("my_org")
+            result = client.public_repos()
+
+            # Assertions
+            self.assertEqual(result, ["repo1", "repo2", "repo3"])
+            mock_get_json.assert_called_once_with("http://mocked.url")
+            mock_repos_url.assert_called_once()
+
+        
+    
+if __name__ == "__main__":
+    unittest.main()
