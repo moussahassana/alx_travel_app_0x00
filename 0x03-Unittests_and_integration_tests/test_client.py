@@ -1,11 +1,18 @@
 #!/usr/bin/env python3
+"""
+Unit tests for the client module.
+
+This module contains the TestGithubOrgClient test case class,
+which validates the behavior of the GithubOrgClient class,
+including tests for organization retrieval and public repository listing.
+"""
 from client import GithubOrgClient
 import unittest
 from parameterized import parameterized
 from unittest.mock import PropertyMock, patch
 
 
-class TestGithubOrgClient(unittest.TestCase) :
+class TestGithubOrgClient(unittest.TestCase):
     """Test cases for the GithubOrgClient class."""
 
     @parameterized.expand([
@@ -22,7 +29,9 @@ class TestGithubOrgClient(unittest.TestCase) :
         result = client.org
 
         self.assertEqual(result, expected)
-        mock_get_json.assert_called_once_with(f"https://api.github.com/orgs/{org_name}")
+        mock_get_json.assert_called_once_with(
+            f"https://api.github.com/orgs/{org_name}"
+        )
 
     @patch('client.get_json')
     def test_public_repos(self, mock_get_json):
@@ -46,7 +55,5 @@ class TestGithubOrgClient(unittest.TestCase) :
             mock_get_json.assert_called_once_with("http://mocked.url")
             mock_repos_url.assert_called_once()
 
-        
-    
 if __name__ == "__main__":
     unittest.main()
